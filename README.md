@@ -118,7 +118,13 @@ Surefire runs TestNG methods in parallel with 3 threads. `perCoreThreadCount` is
 
 The browser is 1400 by 900 so the desktop event dialog is used. Below 768 pixels the same form becomes a stepped mobile dialog. Page load strategy is `eager`, because the hosted page does not reach a complete load while third-party scripts are still running.
 
-Event create, update, and delete are limited to 10 mutations per minute per client. If those calls start returning HTTP 429, set `threadCount` in `pom.xml` to 2 and run again.
+Event create, update, and delete are limited to 10 mutations per minute per client. If those calls start returning HTTP 429, set `threadCount` in `pom.xml` to 2 and run again.  
+  
+Surefire runs the tests. Allure presents what happened. You need Surefire to execute the suite. Allure is what makes the demo evidence readable.
+
+Surefire is the Maven plugin behind .\mvnw.cmd test. It starts TestNG, runs the methods on 3 threads, and prints Tests run: 18, Failures: 0. The plain report lands in target/surefire-reports/index.html: pass or fail, time, and a stack trace. It does not store screenshots or the API call bodies.
+
+Allure does not run anything. During that same Surefire run, the Allure listener writes a file per test into target/allure-results. .\mvnw.cmd allure:serve turns those files into the report you open in a browser. That report has the test ids, the three CSV rows as separate iterations, screenshots when a UI test fails, the parallel timeline, and each API call as HTTP request and HTTP response with the cookie and password redacted.
 
 ## Layout
 
