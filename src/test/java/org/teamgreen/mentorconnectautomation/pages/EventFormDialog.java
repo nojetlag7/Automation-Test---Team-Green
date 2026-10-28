@@ -69,15 +69,16 @@ public class EventFormDialog {
 
     public boolean pastDayIsDisabled() {
         openPreviousMonth();
-        SelenideElement day = dayInCurrentMonth("15");
+        SelenideElement day = dayButton(LocalDate.now().withDayOfMonth(15).minusMonths(1));
+        day.shouldBe(visible);
         return day.is(disabled) || "true".equals(day.getAttribute("aria-disabled"));
     }
 
     public EventFormDialog pickPastStartDate() {
-        if ($$("button[data-day]").isEmpty()) {
+        if ($$("td[data-day]").isEmpty()) {
             openPreviousMonth();
         }
-        dayInCurrentMonth("15").click(usingJavaScript());
+        dayButton(LocalDate.now().withDayOfMonth(15).minusMonths(1)).click(usingJavaScript());
         applyDate();
         return this;
     }
@@ -94,11 +95,11 @@ public class EventFormDialog {
 
     private void pickDay(SelenideElement trigger, String placeholder, LocalDate date) {
         trigger.click();
-        $$("button[data-day]").first().shouldBe(visible);
-        if (date.getMonthValue() != LocalDate.now().getMonthValue()) {
-            $("button[aria-label='Go to the Next Month']").click(usingJavaScript());
+        if (date.getMonthValue() != LocalDate.now().getMonthValue()
+                || date.getYear() != LocalDate.now().getYear()) {
+            $("button[aria-label='Go to the Next Month']").shouldBe(visible).click(usingJavaScript());
         }
-        dayInCurrentMonth(String.valueOf(date.getDayOfMonth())).click(usingJavaScript());
+        dayButton(date).shouldBe(visible).click(usingJavaScript());
         applyDate();
         trigger.shouldNotHave(text(placeholder));
     }
@@ -172,17 +173,21 @@ public class EventFormDialog {
 
     private void openPreviousMonth() {
         openStartPicker();
-        String before = dayInCurrentMonth("15").getAttribute("data-day");
+        String before = $("td[data-day]").shouldBe(visible).getAttribute("data-day");
         $("button[aria-label='Go to the Previous Month']").click(usingJavaScript());
         Wait().until(driver -> {
-            String now = dayInCurrentMonth("15").getAttribute("data-day");
+            String now = $("td[data-day]").getAttribute("data-day");
             return now != null && !now.equals(before);
         });
     }
 
     private void openStartPicker() {
         startDateButton().click();
-        $$("button[data-day]").first().shouldBe(visible);
+        $("td[data-day]").shouldBe(visible);
+    }
+
+    private SelenideElement dayButton(LocalDate date) {
+        return $("td[data-day='" + date + "'] button");
     }
 
     private SelenideElement startDateButton() {
@@ -195,16 +200,5 @@ public class EventFormDialog {
 
     private void applyDate() {
         $$("button").findBy(exactText("Apply")).click(usingJavaScript());
-    }
-
-    private SelenideElement dayInCurrentMonth(String dayNumber) {
-        return $$("button[data-day]").asFixedIterable().stream()
-                .filter(day -> dayNumber.equals(day.getText().trim()))
-                .filter(day -> {
-                    String cellClass = day.parent().getAttribute("class");
-                    return cellClass == null || !cellClass.contains("outside");
-                })
-                .findFirst()
-                .orElseThrow(() -> new IllegalStateException("No in-month day " + dayNumber));
     }
 }
