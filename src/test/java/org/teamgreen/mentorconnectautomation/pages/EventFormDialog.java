@@ -41,14 +41,25 @@ public class EventFormDialog {
     }
 
     public EventFormDialog setDescription(String description) {
-        dialog().$("#description").setValue(description);
+        descriptionField().setValue(description);
         return this;
+    }
+
+    public SelenideElement descriptionField() {
+        return dialog().$("#description");
     }
 
     public EventFormDialog selectType(String label) {
         dialog().$("#type").click();
         $$("[role='option']").findBy(exactText(label)).click();
         dialog().$("#type").shouldHave(text(label));
+        return this;
+    }
+
+    public EventFormDialog selectVisibility(String label) {
+        visibilityTrigger().click();
+        $$("[role='option']").findBy(text(label)).click();
+        visibilityTrigger().shouldHave(text(label));
         return this;
     }
 

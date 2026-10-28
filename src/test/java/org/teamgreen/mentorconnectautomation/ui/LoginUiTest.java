@@ -6,6 +6,7 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import org.teamgreen.mentorconnectautomation.base.BaseUiTest;
 import org.teamgreen.mentorconnectautomation.config.TestConfig;
+import org.teamgreen.mentorconnectautomation.pages.EventsPage;
 import org.teamgreen.mentorconnectautomation.pages.LoginPage;
 import org.testng.annotations.Test;
 
@@ -18,13 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LoginUiTest extends BaseUiTest {
 
     @Test
-    @Description("UI-01 Valid login opens the dashboard")
+    @Description("UI-01 Valid login opens the dashboard, and the events list still loads")
     public void validLoginOpensDashboard() {
         LoginPage login = new LoginPage().open();
         login.signIn(TestConfig.mentorEmail(), TestConfig.mentorPassword());
         login.shouldReachDashboard();
         webdriver().shouldHave(urlContaining("/dashboard"));
-        assertThat(WebDriverRunner.url()).contains("/dashboard");
+        new EventsPage().open();
     }
 
     @Test

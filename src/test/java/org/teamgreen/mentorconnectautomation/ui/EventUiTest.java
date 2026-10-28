@@ -51,16 +51,18 @@ public class EventUiTest extends BaseUiTest {
     }
 
     @Test
-    @Description("UI-04 Create a public workshop and see it in the list")
+    @Description("UI-04 Create a public webinar and read the saved description back")
     public void createPublicWorkshop() {
         String title = TestDataFactory.eventTitle();
+        String description = "Line one\nLine two of the workshop description.";
         try {
             EventFormDialog dialog = openDialog();
             dialog.setTitle("temp").clearTitle().setTitle(title);
             dialog.titleField().shouldHave(value(title));
-            dialog.setDescription("Line one\nLine two of the workshop description.");
+            dialog.setDescription(description);
+            dialog.descriptionField().shouldHave(value(description));
             dialog.selectType("Webinar");
-            dialog.visibilityTrigger().shouldHave(text("Public"));
+            dialog.selectVisibility("Private").selectVisibility("Public");
             dialog.pickFutureStartDate().pickFutureEndDate();
             dialog.setLocation("Room 4").setMaxParticipants("10");
             dialog.submit();
@@ -76,6 +78,7 @@ public class EventUiTest extends BaseUiTest {
                 return false;
             });
             events.eventTitle(title).shouldBe(visible);
+            events.openEvent(title).shouldShowSavedEvent(description, "Webinar", "Public");
         } finally {
             cleanup(title);
         }

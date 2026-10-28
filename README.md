@@ -31,11 +31,19 @@ Runs the UI tests and the events API tests. The `registration` group is excluded
 
 Runs only API-02 and API-03. The app counts registration attempts before it validates the body, and the limit is 3 requests per hour from one client. Do not loop this command.
 
+Run the everyday suite first, then the registration group. Registration writes to its own folders, so it does not replace the 18-test Surefire report or the Allure results.
+
 ```
 .\mvnw.cmd allure:serve
 ```
 
-Builds the Allure report from `target/allure-results` and opens it. Surefire text reports are under `target/surefire-reports`.
+Opens the everyday Allure report from `target/allure-results`. Surefire text for that run is `target/surefire-reports`.
+
+```
+.\mvnw.cmd allure:serve -Dallure.results.directory=target/allure-results-registration
+```
+
+Opens the registration report. Its Surefire text is `target/surefire-reports-registration`. API calls are attached on each test as `HTTP request` and `HTTP response`. Cookie, Set-Cookie, Authorization, and password fields are replaced with `[redacted]`.
 
 Headless Chrome is the default. To watch the browser:
 

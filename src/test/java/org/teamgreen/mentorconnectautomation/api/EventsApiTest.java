@@ -5,9 +5,10 @@ import io.qameta.allure.Epic;
 import io.qameta.allure.Feature;
 import io.restassured.response.Response;
 import org.teamgreen.mentorconnectautomation.base.BaseApiTest;
-import org.teamgreen.mentorconnectautomation.config.TestConfig;
 import org.teamgreen.mentorconnectautomation.data.TestDataFactory;
 import org.testng.annotations.Test;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -26,7 +27,7 @@ public class EventsApiTest extends BaseApiTest {
     }
 
     @Test
-    @Description("API-04 Create event returns the saved event")
+    @Description("API-04 Create event matches the event contract")
     public void createEventReturnsSavedEvent() {
         String title = TestDataFactory.eventTitle();
         EventsApi events = mentorEvents();
@@ -34,10 +35,31 @@ public class EventsApiTest extends BaseApiTest {
             Response response = events.create(TestDataFactory.publicEvent(title));
 
             assertThat(response.statusCode()).isEqualTo(201);
-            assertThat(response.jsonPath().getString("id")).isNotBlank();
+            assertThat(response.contentType()).contains("application/json");
+            Object id = response.jsonPath().get("id");
+            Object description = response.jsonPath().get("description");
+            Object type = response.jsonPath().get("type");
+            Object date = response.jsonPath().get("date");
+            Object online = response.jsonPath().get("isOnline");
+            Object visibility = response.jsonPath().get("visibility");
+            Object location = response.jsonPath().get("location");
+            Object maxParticipants = response.jsonPath().get("maxParticipants");
+            Object creator = response.jsonPath().get("creator");
+            Object creatorId = response.jsonPath().get("creator.id");
+            assertThat(id).isInstanceOf(String.class);
+            assertThat((String) id).isNotBlank();
             assertThat(response.jsonPath().getString("title")).isEqualTo(title);
-            assertThat(response.jsonPath().getString("type")).isEqualTo("WORKSHOP");
-            assertThat(response.jsonPath().getString("date")).isNotBlank();
+            assertThat(description).isEqualTo("Scheduled by the Team Green suite.");
+            assertThat(type).isEqualTo("WORKSHOP");
+            assertThat(date).isInstanceOf(String.class);
+            assertThat((String) date).matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z");
+            assertThat(online).isInstanceOf(Boolean.class).isEqualTo(false);
+            assertThat(visibility).isEqualTo("PUBLIC");
+            assertThat(location).isEqualTo("QA Lab");
+            assertThat(maxParticipants).isInstanceOf(Number.class);
+            assertThat(((Number) maxParticipants).intValue()).isEqualTo(10);
+            assertThat(creator).isInstanceOf(Map.class);
+            assertThat(creatorId).isInstanceOf(String.class);
         } finally {
             events.deleteByTitleQuietly(title);
         }

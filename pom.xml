@@ -18,6 +18,8 @@
     <rest-assured.version>5.5.0</rest-assured.version>
     <excludedGroups>registration</excludedGroups>
     <groups></groups>
+    <surefire.reportsDirectory>${project.build.directory}/surefire-reports</surefire.reportsDirectory>
+    <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
   </properties>
 
   <dependencies>
@@ -88,6 +90,8 @@
       </activation>
       <properties>
         <excludedGroups>__none__</excludedGroups>
+        <surefire.reportsDirectory>${project.build.directory}/surefire-reports-registration</surefire.reportsDirectory>
+        <allure.results.directory>${project.build.directory}/allure-results-registration</allure.results.directory>
       </properties>
     </profile>
   </profiles>
@@ -104,11 +108,12 @@
           <perCoreThreadCount>false</perCoreThreadCount>
           <excludedGroups>${excludedGroups}</excludedGroups>
           <groups>${groups}</groups>
+          <reportsDirectory>${surefire.reportsDirectory}</reportsDirectory>
           <argLine>
             -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
           </argLine>
           <systemPropertyVariables>
-            <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+            <allure.results.directory>${allure.results.directory}</allure.results.directory>
           </systemPropertyVariables>
         </configuration>
         <dependencies>
@@ -124,7 +129,7 @@
         <artifactId>allure-maven</artifactId>
         <version>2.15.2</version>
         <configuration>
-          <resultsDirectory>${project.build.directory}/allure-results</resultsDirectory>
+          <resultsDirectory>${allure.results.directory}</resultsDirectory>
         </configuration>
       </plugin>
     </plugins>
