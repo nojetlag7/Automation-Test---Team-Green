@@ -1,0 +1,2 @@
+This plain-text file is allow-listed by POST /api/upload (text/plain).
+The rejection case uploads rejected.exe instead.

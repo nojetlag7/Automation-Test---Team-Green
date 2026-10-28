@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="MentorConnectRegistration" parallel="none" thread-count="1">
+  <test name="registration">
+    <groups>
+      <run>
+        <include name="registration"/>
+      </run>
+    </groups>
+    <packages>
+      <package name="org.teamgreen.mentorconnectautomation.api"/>
+    </packages>
+  </test>
+</suite>

@@ -1,0 +1,4 @@
+title,expected
+ab,Title must be at least 3 characters
+abc,accepted
+MAX_PLUS_ONE,Title must be less than 100 characters
